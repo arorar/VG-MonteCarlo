@@ -58,7 +58,7 @@ VG.sim=function(param,r,T,sim,S0,K,type){
 }
 
 
-#this function calculates European option price via GM Monte Carlo
+#this function calculates European option price via GM(Geometric Brownian Motion) Monte Carlo
 GM.sim=function(r,sigma,T,sim,S0,K,type){
   eps=rnorm(sim)
   S=S0*exp((r-0.5*sigma^2)*T+sigma*sqrt(T)*eps)
