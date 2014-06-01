@@ -16,21 +16,29 @@ FFT.price <- function(phi, S0, K, r, T, type) {
   j <- -b + lambda * (0:(N - 1))
   v <- h * (0:(N - 1))
   
+  phi.risk.neutral <- function(u)  {
+    m <- r*T - log(phi(-i)) 
+    phi(u) * exp(i*u*m)
+  }
+  
   psi <- function(u) 
-    exp(-r*T) * phi((u - (alpha + 1)*i))/((i*u + alpha)*(i*u + alpha + 1))
+    exp(-r*T) * phi.risk.neutral((u - (alpha + 1)*i))/((i*u + alpha)*(i*u + alpha + 1))
   
   res <- exp(-alpha * j)/pi * fft( exp(i*b*v) * psi(v) * h/3 * 
-                                    (3 + (-1)^(1:N) - as.numeric((1:N) == 1)) )
+                                     (3 + (-1)^(1:N) - as.numeric((1:N) == 1)) )
   inter <- spline(j, Re(res), xout = log(K/S0))
-  return(inter$y * S0)
+  return(inter$y*S0)
 }
 
-char.BS <- function(u) exp(T*(i*u*(r - 0.5 * sigma^2) - 0.5 * (sigma*u)^2))
+char.BS <- function(u)  { 
+  i <- sqrt(as.complex(-1))
+  exp(T*(i*u*(-0.5 * sigma^2) - 0.5 * (sigma*u)^2))
+}
 
 char.VG <- function(u) {
   i <- sqrt(as.complex(-1))
   omega <- 1/nu * log(1 - theta*nu - 0.5*sigma^2*nu)
-  (exp((r + omega)*T))^(i*u)*(1 - i*u*nu*theta + 0.5*(sigma*u)^2*nu)^(-T/nu)
+  exp(i*u*omega*T)*(1 - i*u*nu*theta + 0.5*(sigma*u)^2*nu)^(-T/nu)
 }
 
 vg.mc.price <- function(S0, K, r, T, sigma, type, nu, theta, nsim) {
