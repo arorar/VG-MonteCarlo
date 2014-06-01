@@ -3,8 +3,8 @@
 ##############################
 
 delta.diff=function(param,r,T,sim,S0,K,type,h){
-  payoff1=VG.Euro(param,r,T,sim,S0+h,K,type)$payoff
-  payoff2=VG.Euro(param,r,T,sim,S0-h,K,type)$payoff
+  payoff1=VG.TimeChange.Euro(param,r,T,sim,S0+h,K,type)$payoff
+  payoff2=VG.TimeChange.Euro(param,r,T,sim,S0-h,K,type)$payoff
   deriv=(payoff1-payoff2)/(2*h)
   deriv.mean=mean(deriv)
   deriv.se=sd(deriv)/sqrt(sim)
@@ -13,9 +13,9 @@ delta.diff=function(param,r,T,sim,S0,K,type,h){
 #######################################################
 
 gamma.diff=function(param,r,T,sim,S0,K,type,h){
-  payoff0=VG.Euro(param,r,T,sim,S0,K,type)$payoff
-  payoff1=VG.Euro(param,r,T,sim,S0+h,K,type)$payoff
-  payoff2=VG.Euro(param,r,T,sim,S0-h,K,type)$payoff
+  payoff0=VG.TimeChange.Euro(param,r,T,sim,S0,K,type)$payoff
+  payoff1=VG.TimeChange.Euro(param,r,T,sim,S0+h,K,type)$payoff
+  payoff2=VG.TimeChange.Euro(param,r,T,sim,S0-h,K,type)$payoff
   deriv=(payoff1+payoff2-2*payoff0)/h^2
   deriv.mean=mean(deriv)
   deriv.se=sd(deriv)/sqrt(sim)
@@ -24,8 +24,8 @@ gamma.diff=function(param,r,T,sim,S0,K,type,h){
 #######################################################
 
 rho.diff=function(param,r,T,sim,S0,K,type,h){
-  payoff1=VG.Euro(param,r+h,T,sim,S0,K,type)$payoff
-  payoff2=VG.Euro(param,r-h,T,sim,S0,K,type)$payoff
+  payoff1=VG.TimeChange.Euro(param,r+h,T,sim,S0,K,type)$payoff
+  payoff2=VG.TimeChange.Euro(param,r-h,T,sim,S0,K,type)$payoff
   deriv=((payoff1)-(payoff2))/(2*h)
   deriv.mean=mean(deriv)
   deriv.se=sd(deriv)/sqrt(sim)
@@ -36,8 +36,8 @@ rho.diff=function(param,r,T,sim,S0,K,type,h){
 theta.diff=function(param,r,T,sim,S0,K,type,h){
   param1=c(param[1],param[2]+h,param[3])
   param2=c(param[1],param[2]-h,param[3])
-  payoff1=VG.Euro(param1,r,T,sim,S0,K,type)$payoff
-  payoff2=VG.Euro(param2,r,T,sim,S0,K,type)$payoff
+  payoff1=VG.TimeChange.Euro(param1,r,T,sim,S0,K,type)$payoff
+  payoff2=VG.TimeChange.Euro(param2,r,T,sim,S0,K,type)$payoff
   deriv=(payoff1-payoff2)/(2*h)
   deriv.mean=mean(deriv)
   deriv.se=sd(deriv)/sqrt(sim)
@@ -48,8 +48,8 @@ theta.diff=function(param,r,T,sim,S0,K,type,h){
 vega.diff=function(param,r,T,sim,S0,K,type,h){
   param1=c(param[1]+h,param[2:3])
   param2=c(param[1]-h,param[2:3])
-  payoff1=VG.Euro(param1,r,T,sim,S0,K,type)$payoff
-  payoff2=VG.Euro(param2,r,T,sim,S0,K,type)$payoff
+  payoff1=VG.TimeChange.Euro(param1,r,T,sim,S0,K,type)$payoff
+  payoff2=VG.TimeChange.Euro(param2,r,T,sim,S0,K,type)$payoff
   deriv=(payoff1-payoff2)/(2*h)
   deriv.mean=mean(deriv)
   deriv.se=sd(deriv)/sqrt(sim)
@@ -63,7 +63,7 @@ vega.diff=function(param,r,T,sim,S0,K,type,h){
 ################################
 
 delta.pathwise=function(param,r,T,sim,S0,K,type){
-  S=VG.Euro(param,r,T,sim,S0,K,type)$S
+  S=VG.TimeChange.Euro(param,r,T,sim,S0,K,type)$S
   if(type==1){
     v=exp(-r*T)*as.numeric(S>K)*S/S0
   }else{
@@ -88,7 +88,7 @@ gamma.pathwise=function(param,r,T,sim,S0,K,type,h){
 ########################################################
 
 rho.pathwise=function(param,r,T,sim,S0,K,type){
-  S=VG.Euro(param,r,T,sim,S0,K,type)$S
+  S=VG.TimeChange.Euro(param,r,T,sim,S0,K,type)$S
   if(type==1){
     v=exp(-r*T)*as.numeric(S>K)*T*K
   }else{
@@ -106,7 +106,7 @@ theta.pathwise=function(param,r,T,sim,S0,K,type){
   theta=param[2]
   nu=param[3]
   deriv.w=-1/(1-theta*nu-sigma^2*nu/2)
-  output=VG.Euro(param,r,T,sim,S0,K,type)
+  output=VG.TimeChange.Euro(param,r,T,sim,S0,K,type)
   S=output$S
   dG=output$dG
   if(type==1){
@@ -126,7 +126,7 @@ vega.pathwise=function(param,r,T,sim,S0,K,type){
   theta=param[2]
   nu=param[3]
   deriv.w=-sigma/(1-theta*nu-sigma^2*nu/2)
-  output=VG.Euro(param,r,T,sim,S0,K,type)
+  output=VG.TimeChange.Euro(param,r,T,sim,S0,K,type)
   S=output$S
   dG=output$dG
   Z=output$Z
