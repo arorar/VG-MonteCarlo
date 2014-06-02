@@ -38,6 +38,8 @@ VG.DiffGamma.Euro=function(param,r,T,sim,S0,K,type){
   w=log(1-theta*nu-sigma^2*nu/2)/nu
   mu.p=VG.mu(sigma,theta,nu,1)
   mu.m=VG.mu(sigma,theta,nu,-1)
+  nu.p=mu.p^2*nu
+  nu.m=mu.m^2*nu
   
   X=0
   g.p=rgamma(sim,shape=T/nu,scale=nu*mu.p)
@@ -51,7 +53,9 @@ VG.DiffGamma.Euro=function(param,r,T,sim,S0,K,type){
   return(estimator=list(price=c(price=p.hat,se=p.se),
                         payoff=payoff.disc,
                         S=S,
-                        X=X))
+                        X=X,
+                        g.p=g.p,
+                        g.m=g.m))
 }
 
 
@@ -61,7 +65,7 @@ VG.DiffGamma.Euro=function(param,r,T,sim,S0,K,type){
 GBM.Euro=function(r,sigma,T,sim,S0,K,type){
   dt=T
   eps=rnorm(sim)
-  S=S0*exp((r-0.5*sigma^2)*dt+sigma*sqrt(dt)*eps)
+  S=S0*exp((r-div-0.5*sigma^2)*dt+sigma*sqrt(dt)*eps)
   payoff.disc=pmax(type*(S-K),0)*exp(-r*T)
   p.hat=mean(payoff.disc)
   p.se=sd(payoff.disc)/sqrt(sim)
@@ -71,13 +75,16 @@ GBM.Euro=function(r,sigma,T,sim,S0,K,type){
 
 
 #Test the result
-param=c(0.25,-0.15,0.5) #c(sigma,theta,nu)
+param=c(0.25,0,0.5) #c(sigma,theta,nu)
 S0=100
-K=110
-T=0.25
-sim=1e5
+K=45
+T=1
+sim=20000
 r=0.05
+div=0.02
 
-VG.Euro(param,r,T,sim,S0,K,1)$price
-VG.Diff.Euro(param,r,T,sim,S0,K,1)$price
-GBM.Euro(r,param[1],T,sim,S0,K,1)$price
+VG.Euro(param,r,T,sim,S0,K,-1)$price
+VG.Diff.Euro(param,r,T,sim,S0,K,-1)$price
+GBM.Euro(r,param[1],T,sim,S0,K,-1)$price
+bs.price(S0, K, r, T, param[1], -1) 
+
