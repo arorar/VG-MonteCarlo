@@ -52,7 +52,7 @@ IS <- function(param.old, param.new,T,type) {
   p.hat=mean(payoff)
   p.se=sd(payoff)/sqrt(sim)
   return(c(price=p.hat,se=p.se))
-}sigma=param[1]
+}
 
 
 
