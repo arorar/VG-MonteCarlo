@@ -30,9 +30,6 @@ IS <- function(param.old, param.new,T,type) {
   phi.p=exp(2*(mu.new.m/param.new[1]^2-mu.old.m/(param.old[1]^2))*abs(g.p))
   phi.m=exp(2*(mu.new.p/param.new[1]^2-mu.old.p/(param.old[1]^2))*abs(g.m))
 
-#   phi.p=exp(-(mu.new.p*nu-mu.old.p*nu)*abs(g.p))
-#   phi.m=exp(-(mu.new.m*nu-mu.old.m*nu)*abs(g.m))
-  
   Z=integrate(function(y) integrand(y,param.old, param.new), -Inf,Inf)
   rad.nik=exp(-T * Z$value)* phi.p * phi.m
   
@@ -47,9 +44,3 @@ IS <- function(param.old, param.new,T,type) {
 param.old=c(0.25,0,0.5)
 param.new=c(0.4,-0.05,0.5)
 IS(param.old, param.new,T,-1)
-
-# sigma=param[1]
-# theta=param[2]
-# nu=param[3]
-# w=log(1-theta*nu-sigma^2*nu/2)/nu
-# log(K/S0)-(r+w)*T
