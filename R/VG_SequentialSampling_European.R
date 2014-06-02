@@ -36,8 +36,8 @@ VG.DiffGamma.Euro=function(param,r,T,sim,S0,K,type){
   theta=param[2]
   nu=param[3]
   w=log(1-theta*nu-sigma^2*nu/2)/nu
-  mu.p=VG.mu(sigma,theta,nu,1)
-  mu.m=VG.mu(sigma,theta,nu,-1)
+  mu.p=VG.mu(param,1)
+  mu.m=VG.mu(param,-1)
   nu.p=mu.p^2*nu
   nu.m=mu.m^2*nu
   
@@ -52,8 +52,6 @@ VG.DiffGamma.Euro=function(param,r,T,sim,S0,K,type){
   p.se=sd(payoff.disc)/sqrt(sim)
   return(estimator=list(price=c(price=p.hat,se=p.se),
                         payoff=payoff.disc,
-                        S=S,
-                        X=X,
                         g.p=g.p,
                         g.m=g.m))
 }
