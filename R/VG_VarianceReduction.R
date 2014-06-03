@@ -29,3 +29,4 @@ rad.nik <- function(t, C, G.old, M.old, G.new, M.new) {
   exp(-t * Z$value)* phi.p * phi.m
 }
 
+ 

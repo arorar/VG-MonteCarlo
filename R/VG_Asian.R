@@ -32,7 +32,7 @@ vg.geom.asian.mc.price <-
   
   prices <- exp(-r*T)*pmax(type*payoff,0) 
   
-  list( price = mean(prices), se = sd(prices)/sqrt(nsim))
+  list( price = c(price=mean(prices), se = sd(prices)/sqrt(nsim)),S=S)
 }
 
 bs.geom.asian.mc.price <- 
@@ -50,9 +50,13 @@ bs.geom.asian.mc.price <-
     payoff <- exp(apply(log(S),1,mean)) - K
     prices <- exp(-r*T)*pmax(type*payoff,0) 
     
-    list( price = mean(prices), se = sd(prices)/sqrt(nsim))
+    list( price = c(price=mean(prices), se = sd(prices)/sqrt(nsim)),S=S)
 }
 
+<<<<<<< HEAD
+
+=======
+>>>>>>> 41e10cdaa513dcdb5e937e27b9aaaac88aed0190
 FFT.price <- function(phi, S0, K, r, T, type, steps) {
   
   i <- sqrt(as.complex(-1))
@@ -102,6 +106,10 @@ char.VG <- function(u) {
 S0 <- 100; K <- 110; r <- 0.05; T <- 0.25; sigma <- 0.25
 theta <- -0.15; nu <- 0.5; nsim <- 10^5; steps <- 10^3; tau <- T/steps
 
+<<<<<<< HEAD
+
+=======
+>>>>>>> 41e10cdaa513dcdb5e937e27b9aaaac88aed0190
 
 FFT.price(char.BS, S0 = S0, K = K, r = r, T = T,type = 1, steps)
 mc.call <- bs.geom.asian.mc.price(S0, K, r, T, sigma, type = 1, nsim, steps)

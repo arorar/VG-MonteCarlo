@@ -90,10 +90,10 @@ fit=fit.VG(SPreturn)
 
 #compare the density curves of different distributions
 png(file="density plots.png",width=7,height=5,units="in",res=300)
-plot(density(SPreturn,adjust=0.8),main="Empirical density vs. Three distributions")
+plot(density(SPreturn,adjust=0.8),lwd=2,main="Empirical density vs. Three distributions")
 curve(dnorm(x,mu.norm,sigma.norm),add=TRUE,col="blue",lty=2)
 curve(dnorm(x,mu.norm.rob,sigma.norm.rob),add=TRUE,col="green",lty=3)
-curve(dVG(x,fit$mean, fit$theta, fit$nu, fit$sigma),add=TRUE,col="red")
+curve(dVG(x,fit$mean, fit$theta, fit$nu, fit$sigma),add=TRUE,col="red",lwd=2)
 legend("topright",legend=c("Empirical density","Normal density",
                            "Robust normal density","VG density"),
        col=c("black","blue","green","red"),lty=c(1,2,3,1),bty="n")
@@ -107,3 +107,13 @@ qqnorm(SPreturn)
 qqline(SPreturn)
 dev.off()
 
+png(file="CDF plots.png",width=7,height=5,units="in",res=300)
+plot(ecdf(as.numeric(SPreturn)),verticals=TRUE,do.points=FALSE,lwd=2,
+     main="Empirical density vs. Three distributions")
+curve(pnorm(x,mu.norm,sigma.norm),add=TRUE,col="blue",lty=2)
+curve(pnorm(x,mu.norm.rob,sigma.norm.rob),add=TRUE,col="green",lty=3)
+curve(pvg(x,vgC=fit$mean, theta=fit$theta, nu=fit$nu, sigma=fit$sigma),add=TRUE,col="red",lwd=2)
+legend("topleft",legend=c("Empirical CDF","Normal CDF",
+                           "Robust Normal CDF","VG CDF"),
+       col=c("black","blue","green","red"),lty=c(1,2,3,1),bty="n")
+dev.off()
