@@ -142,16 +142,35 @@ rho=sapply(sigma.seq,function(x) rho.pathwise(c(x,param[2:3]),r,T,sim,S0,K,1)[[1
 theta=sapply(sigma.seq,function(x) theta.pathwise(c(x,param[2:3]),r,T,sim,S0,K,1)[[1]][1])
 vega=sapply(sigma.seq,function(x) vega.pathwise(c(x,param[2:3]),r,T,sim,S0,K,1)[[1]][1])
 
+delta2=sapply(sigma.seq,function(x) bs.delta(S0, K, r, q = 0 , T, x,1))
+gamma2=sapply(sigma.seq,function(x) bs.gamma(S0, K, r, q = 0 , T, x,type = 1))
+rho2=sapply(sigma.seq,function(x) bs.rho(S0, K, r, q = 0, T, x, type=1))
+vega2=sapply(sigma.seq,function(x) bs.vega(S0, K, r, q = 0, T, x,type = 1))
+
 png(file="Greeks vs. sigma.png",width=7,height=7,units="in",res=300)
-par(mfrow=c(3,2))
+par(mfrow=c(2,2))
 
 scatter.smooth(sigma.seq,delta,span=0.2,xlab="sigma",lpars=list(col="red",lwd=2))
-scatter.smooth(sigma.seq,gamma,span=0.5,xlab="sigma",lpars=list(col="red",lwd=2))
+lines(sigma.seq,delta2,xlab="sigma",lwd=2,lty=2)
+legend("bottomright",c("VG","BS"),col=c("red","Black"),lty=c(1,2),bty="n")
+
+scatter.smooth(sigma.seq,gamma,span=0.2,xlab="sigma",lpars=list(col="red",lwd=2))
+lines(sigma.seq,gamma2,xlab="sigma",lwd=2,lty=2)
+legend("topright",c("VG","BS"),col=c("red","Black"),lty=c(1,2),bty="n")
+
 scatter.smooth(sigma.seq,rho,span=0.2,xlab="sigma",lpars=list(col="red",lwd=2))
-scatter.smooth(sigma.seq,theta,span=0.5,xlab="sigma",lpars=list(col="red",lwd=2))
+lines(sigma.seq,rho2,xlab="sigma",lwd=2,lty=2)
+legend("bottomright",c("VG","BS"),col=c("red","Black"),lty=c(1,2),bty="n")
+
 scatter.smooth(sigma.seq,vega,span=0.2,xlab="sigma",lpars=list(col="red",lwd=2))
+lines(sigma.seq,vega2,xlab="sigma",lwd=2,lty=2)
+legend("bottomright",c("VG","BS"),col=c("red","Black"),lty=c(1,2),bty="n")
+
 par(mfrow=c(1,1))
 dev.off()
+
+
+
 
 
 theta.seq=seq(-0.2,0.2,by=0.01)
@@ -162,11 +181,11 @@ theta=sapply(theta.seq,function(x) theta.pathwise(c(param[1],x,param[3]),r,T,sim
 vega=sapply(theta.seq,function(x) vega.pathwise(c(param[1],x,param[3]),r,T,sim,S0,K,1)[[1]][1])
 
 png(file="Greeks vs. theta.png",width=7,height=7,units="in",res=300)
-par(mfrow=c(3,2))
+par(mfrow=c(2,2))
 scatter.smooth(theta.seq,delta,span=0.5,xlab="theta",lpars=list(col="red",lwd=2))
 scatter.smooth(theta.seq,gamma,span=0.5,xlab="theta",lpars=list(col="red",lwd=2))
 scatter.smooth(theta.seq,rho,span=0.5,xlab="theta",lpars=list(col="red",lwd=2))
-scatter.smooth(theta.seq,theta,span=0.5,xlab="theta",lpars=list(col="red",lwd=2))
+#scatter.smooth(theta.seq,theta,span=0.5,xlab="theta",lpars=list(col="red",lwd=2))
 scatter.smooth(theta.seq,vega,span=0.5,xlab="theta",lpars=list(col="red",lwd=2))
 par(mfrow=c(1,1))
 dev.off()
@@ -179,15 +198,18 @@ rho=sapply(nu.seq,function(x) rho.pathwise(c(param[1:2],x),r,T,sim,S0,K,1)[[1]][
 theta=sapply(nu.seq,function(x) theta.pathwise(c(param[1:2],x),r,T,sim,S0,K,1)[[1]][1])
 vega=sapply(nu.seq,function(x) vega.pathwise(c(param[1:2],x),r,T,sim,S0,K,1)[[1]][1])
 
-png(file="Greeks vs. nu.png",width=7,height=7,units="in",res=300)
-par(mfrow=c(3,2))
+png(file="Greeks vs. nu.png",width=7,height=5,units="in",res=300)
+par(mfrow=c(2,2))
 scatter.smooth(nu.seq,delta,span=0.6,xlab="nu",lpars=list(col="red",lwd=2))
 scatter.smooth(nu.seq,gamma,span=0.6,xlab="nu",lpars=list(col="red",lwd=2))
 scatter.smooth(nu.seq,rho,span=0.6,xlab="nu",lpars=list(col="red",lwd=2))
-scatter.smooth(nu.seq,theta,span=0.6,xlab="nu",lpars=list(col="red",lwd=2))
+#scatter.smooth(nu.seq,theta,span=0.6,xlab="nu",lpars=list(col="red",lwd=2))
 scatter.smooth(nu.seq,vega,span=0.6,xlab="nu",lpars=list(col="red",lwd=2))
 par(mfrow=c(1,1))
 dev.off()
+
+
+
 
 
 #7 Variance reduction
