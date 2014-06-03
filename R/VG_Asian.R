@@ -99,8 +99,8 @@ char.VG <- function(u) {
 }
 
 
-S0 <- 100; K <- 110; r <- 0.05; T <- 0.25; sigma <- 0.25
-theta <- -0.15; nu <- 0.5; nsim <- 10^5; steps <- 10^3; tau <- T/steps
+S0 <- 100; K <- 110; r <- 0.05; T <- 1; sigma <- 0.25
+theta <- -0.05; nu <- 0.5; nsim <- 10^5; steps <- 10^3; tau <- T/steps
 
 FFT.price.geom.asian(char.BS, S0 = S0, K = K, r = r, T = T,type = 1, steps)
 mc.call <- bs.geom.asian.mc.price(S0, K, r, T, sigma, type = 1, nsim, steps)
