@@ -42,33 +42,34 @@ control.price <- function(S, K, r, T, vol, N, type, nu, theta, nsim) {
   vg.paths   <- vg.sim.price (S0, K, r, T, vol, nu, theta, pilot.size, N)
   bs.paths <- sprice(S,r,T,vol,N,pilot.size)
   
-  mean.price  <-  0.5/N*apply(vg.paths[,1:N] +  vg.paths[,2:(N+1)],1,sum)
+  geom.mean.price  <- exp(apply(log(vg.paths),1,mean))
   log.mean.price  <-  0.5/N*apply(  log(bs.paths[,1:N]) +  
                                       log(bs.paths[,2:(N+1)]),
                                     1, sum )
   
   
-  geom.asian.payoff <-  exp(-r*T)*pmax(exp(log.mean.price)- K,0)
-  arith.asian.payoff <- exp(-r*T)*pmax(type*(mean.price- K),0)
-  beta    <-  -coef(lm(arith.asian.payoff ~ geom.asian.payoff))
+  geom.bs.asian.payoff <-  exp(-r*T)*pmax(exp(log.mean.price)- K,0)
+  geom.vg.asian.payoff <-  exp(-r*T)*pmax(type*(geom.mean.price- K),0)
+
+  beta    <-  -coef(lm(geom.vg.asian.payoff ~ geom.bs.asian.payoff))
   
   #pricing simulation
   pricing.size <- nsim - pilot.size
   vg.paths   <- vg.sim.price (S0, K, r, T, vol, nu, theta, pricing.size, N)
   bs.paths <- sprice(S,r,T,vol,N,pricing.size)
   
-  mean.price  <-  0.5/N*apply(vg.paths[,1:N] +  vg.paths[,2:(N+1)],1,sum)
+  geom.mean.price  <- exp(apply(log(vg.paths),1,mean))
   log.mean.price  <-  0.5/N*apply(  log(bs.paths[,1:N]) +  
                                       log(bs.paths[,2:(N+1)]),
                                     1, sum )
   
   
-  geom.asian.payoff <-  exp(-r*T)*pmax(exp(log.mean.price)- K,0)
-  arith.asian.payoff <- exp(-r*T)*pmax(type*(mean.price- K),0)
+  geom.bs.asian.payoff <-  exp(-r*T)*pmax(exp(log.mean.price)- K,0)
+  geom.vg.asian.payoff <-  exp(-r*T)*pmax(type*(geom.mean.price- K),0)
   
   geom.asian.price <- geom.asian.call(S,K,r,T,vol,N)
   
-  cv.est    <- arith.asian.payoff + beta[2]*(geom.asian.payoff - geom.asian.price)
+  cv.est    <- geom.vg.asian.payoff + beta[2]*(geom.bs.asian.payoff - geom.asian.price)
   cv.price  <- mean(cv.est)
   cv.se     <- sd(cv.est)/pricing.size
   
@@ -78,5 +79,11 @@ control.price <- function(S, K, r, T, vol, N, type, nu, theta, nsim) {
 S0 <- 100; K <- 110; r <- 0.05; T <- 0.25; sigma <- 0.25
 theta <- -0.15; nu <- 0.5; nsim <- 10^5; steps <- 10^3
 
+set.seed(882258275)
 control.price(S0, K, r, T, sigma, steps, type=1, nu, theta, nsim)
-vg.geom.asian.mc.price(S0, K, r, T, sigma, type=1, nu, theta, nsim, steps, "continuous-arithmetic") 
+
+set.seed(403) 
+vg.geom.asian.mc.price(S0, K, r, T, sigma, type=1, nu, theta, nsim, steps, "discrete-geometric") 
+
+FFT.price.geom.asian(char.VG, S0 = S0, K = K, r = r, T = T,type = 1, steps)
+
