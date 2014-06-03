@@ -52,10 +52,11 @@ VG.DiffGamma.Euro=function(param,r,T,sim,S0,K,type){
   p.se=sd(payoff.disc)/sqrt(sim)
   return(estimator=list(price=c(price=p.hat,se=p.se),
                         payoff=payoff.disc,
+                        X=X,
+                        S=S,
                         g.p=g.p,
                         g.m=g.m))
 }
-
 
 ###################################################################
 #this function calculates European option price via GBM Monte Carlo
@@ -63,7 +64,7 @@ VG.DiffGamma.Euro=function(param,r,T,sim,S0,K,type){
 GBM.Euro=function(r,sigma,T,sim,S0,K,type){
   dt=T
   eps=rnorm(sim)
-  S=S0*exp((r-div-0.5*sigma^2)*dt+sigma*sqrt(dt)*eps)
+  S=S0*exp((r-0.5*sigma^2)*dt+sigma*sqrt(dt)*eps)
   payoff.disc=pmax(type*(S-K),0)*exp(-r*T)
   p.hat=mean(payoff.disc)
   p.se=sd(payoff.disc)/sqrt(sim)
@@ -73,16 +74,17 @@ GBM.Euro=function(r,sigma,T,sim,S0,K,type){
 
 
 #Test the result
-param=c(0.25,0,0.5) #c(sigma,theta,nu)
+param=c(0.25,-0.05,0.5) #c(sigma,theta,nu)
 S0=100
-K=45
-T=1
-sim=20000
+K=110
+T=0.25
+sim=1e5
 r=0.05
-div=0.02
+type=1
 
-VG.Euro(param,r,T,sim,S0,K,-1)$price
-VG.Diff.Euro(param,r,T,sim,S0,K,-1)$price
-GBM.Euro(r,param[1],T,sim,S0,K,-1)$price
-bs.price(S0, K, r, T, param[1], -1) 
+
+VG.TimeChange.Euro(param,r,T,sim,S0,K,type)$price
+VG.DiffGamma.Euro(param,r,T,sim,S0,K,type)$price
+GBM.Euro(r,param[1],T,sim,S0,K,type)$price
+bs.price(S0, K, r, T, param[1], type) 
 
