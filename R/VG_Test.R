@@ -23,29 +23,29 @@ GBM.Euro(r,param[1],T,sim,S0,K,-1)$price
 bs.price(S0, K, r, T, param[1], -1)
 
 vg.geom.asian.mc.price(S0, K, r, T, param[1], type = 1, param[3], param[2], sim, steps)$price
-FFT.price(char.VG, S0 = S0, K = K, r = r, T = T,type = 1, steps)
+FFT.price.geom.asian(char.VG, S0 = S0, K = K, r = r, T = T,type = 1, steps)
 bs.geom.asian.mc.price(S0, K, r, T, param[1], type = 1, sim, steps)$price
-FFT.price(char.BS, S0 = S0, K = K, r = r, T = T,type = 1, steps)
+FFT.price.geom.asian(char.BS, S0 = S0, K = K, r = r, T = T,type = 1, steps)
 
 vg.geom.asian.mc.price(S0, K, r, T, param[1], type = -1, param[3], param[2], sim, steps)$price
-FFT.price(char.VG, S0 = S0, K = K, r = r, T = T,type = -1, steps)
+FFT.price.geom.asian(char.VG, S0 = S0, K = K, r = r, T = T,type = -1, steps)
 bs.geom.asian.mc.price(S0, K, r, T, param[1], type = -1, sim, steps)$price
-FFT.price(char.BS, S0 = S0, K = K, r = r, T = T,type = -1, steps)
+FFT.price.geom.asian(char.BS, S0 = S0, K = K, r = r, T = T,type = -1, steps)
 
 #2 price paths for VG and GBM
 S.VG=vg.geom.asian.mc.price(S0, K, r, T, param[1], type = 1, param[3], param[2], 10, steps)$S
 S.GBM=bs.geom.asian.mc.price(S0, K, r, T, param[1], type = -1, 10, steps)$S
 
-png(file="Stock price paths for VG process.png",width=7,height=5,units="in",res=300)
-matplot(t(S.VG),type="l",xlab="Time",ylab="Stock Price",main="Stock price paths for VG process")
-dev.off()
-
-png(file="Stock price paths for GBM process.png",width=7,height=5,units="in",res=300)
+png(file="Stock price paths for VG and GBM process.png",width=7,height=9,units="in",res=300)
+par(mfrow=c(2,1))
+matplot(t(S.VG),type="l",xlab="Time",ylab="Stock Price",
+        main="Stock price paths for time-changed VG process
+        (sigma=0.25, theta=-0.05, nu=0.5)")
 matplot(t(S.GBM),type="l",xlab="Time",ylab="Stock Price",main="Stock price paths for GBM process")
 dev.off()
 
 
-#3 option prices change with K and T
+#3 option prices change with K
 strike=seq(K-20,K+20,by=5)
 p.VG=sapply(strike, function(x) VG.TimeChange.Euro(param,r,T,sim,S0,x,1)$price[1]) 
 p.GBM=sapply(strike, function(x) GBM.Euro(r,param[1],T,sim,S0,x,1)$price[1])
@@ -63,22 +63,7 @@ lines(strike,p.GBM,lty=2,col="red")
 legend("topleft",legend=c("VG","GBM"),lty=c(1,2),col=c("black","red"),bty="n")
 dev.off()
 
-time=seq(T-0.75,T+0.75,by=0.05)
-p.VG=sapply(time, function(x) VG.TimeChange.Euro(param,r,x,sim,S0,K,1)$price[1]) 
-p.GBM=sapply(time, function(x) GBM.Euro(r,param[1],x,sim,S0,K,1)$price[1])
-png(file="Time vs call option price.png",width=7,height=5,units="in",res=300)
-plot(time,p.VG,type="l",xlab="Time",ylab="Price",main="Time vs. Call option price")
-lines(time,p.GBM,lty=2,col="red")
-legend("topleft",legend=c("VG","GBM"),lty=c(1,2),col=c("black","red"),bty="n")
-dev.off()
 
-p.VG=sapply(time, function(x) VG.TimeChange.Euro(param,r,x,sim,S0,K,-1)$price[1]) 
-p.GBM=sapply(time, function(x) GBM.Euro(r,param[1],x,sim,S0,K,-1)$price[1])
-png(file="Time vs put option price.png",width=7,height=5,units="in",res=300)
-plot(time,p.VG,type="l",ylim=c(10,13.5),xlab="Time",ylab="Price",main="Time vs. Put option price")
-lines(time,p.GBM,lty=2,col="red")
-legend("topleft",legend=c("VG","GBM"),lty=c(1,2),col=c("black","red"),bty="n")
-dev.off()
 
 
 #4 Fit VG distribution
@@ -92,10 +77,10 @@ curve(dVG(x,0, theta=0, nu=0.5, sigma=0.25),from=-1,to=1,ylim=c(0,2.5),ylab="den
       main="VG density vs. sigma")
 curve(dVG(x,0, theta=0, nu=0.5, sigma=0.3),add=TRUE,col="blue",lty=2)
 curve(dVG(x,0, theta=0, nu=0.5, sigma=0.2),add=TRUE,col="red",lty=3)
-legend("topright",legend=c("theta=0,nu=0.5,sigma=0.25",
-                           "theta=0,nu=0.5,sigma=0.3",
-                           "theta=0,nu=0.5,sigma=0.2"),
-       col=c("black","blue","red"),lty=c(1,2,3),bty="n",cex=0.9)
+legend("topright",legend=c("theta=0,nu=0.5,sigma=0.2",
+                           "theta=0,nu=0.5,sigma=0.25",
+                           "theta=0,nu=0.5,sigma=0.3"),
+       col=c("red","black","blue"),lty=c(3,1,2),bty="n",cex=0.9)
 dev.off()
 
 png(file="VG density vs. theta.png",width=7,height=5,units="in",res=300)
@@ -103,21 +88,34 @@ curve(dVG(x,0, theta=0, nu=0.5, sigma=0.25),from=-1,to=1,ylab="density",
       main="VG density vs. theta")
 curve(dVG(x,0, theta=0.2, nu=0.5, sigma=0.25),add=TRUE,col="blue",lty=2)
 curve(dVG(x,0, theta=-0.3, nu=0.5, sigma=0.25),add=TRUE,col="red",lty=3)
-legend("topright",legend=c("theta=0,nu=0.5,sigma=0.25",
-                           "theta=0.2,nu=0.5,sigma=0.25",
-                           "theta=-0.3,nu=0.5,sigma=0.25"),
-       col=c("black","blue","red"),lty=c(1,2,3),bty="n",cex=0.9)
+legend("topright",legend=c("theta=-0.3,nu=0.5,sigma=0.25",
+                           "theta=0,nu=0.5,sigma=0.25",
+                           "theta=0.2,nu=0.5,sigma=0.25"),
+       col=c("red","black","blue"),lty=c(3,1,2),bty="n",cex=0.9)
 dev.off()
 
 png(file="VG density vs. nu.png",width=7,height=5,units="in",res=300)
 curve(dVG(x,0, theta=0, nu=0.5, sigma=0.25),from=-1,to=1,ylim=c(0,2.5),ylab="density",
       main="VG density vs. nu")
-curve(dVG(x,0, theta=0, nu=0.2, sigma=0.25),add=TRUE,col="blue",lty=2)
-curve(dVG(x,0, theta=0, nu=0.8, sigma=0.25),add=TRUE,col="red",lty=3)
-legend("topright",legend=c("theta=0,nu=0.5,sigma=0.25",
-                           "theta=0,nu=0.2,sigma=0.25",
+curve(dVG(x,0, theta=0, nu=0.2, sigma=0.25),add=TRUE,col="red",lty=2)
+curve(dVG(x,0, theta=0, nu=0.8, sigma=0.25),add=TRUE,col="blue",lty=3)
+legend("topright",legend=c("theta=0,nu=0.2,sigma=0.25",
+                           "theta=0,nu=0.5,sigma=0.25",
                            "theta=0,nu=0.8,sigma=0.25"),
-       col=c("black","blue","red"),lty=c(1,2,3),bty="n",cex=0.9)
+       col=c("red","black","blue"),lty=c(2,1,3),bty="n",cex=0.9)
+dev.off()
+
+
+
+png(file="VG density vs. Time.png",width=7,height=5,units="in",res=300)
+curve(dVG(x,0, theta=0, nu=0.5, sigma=0.25,t=1),from=-1,to=1,ylab="density",
+      main="VG density vs. Time")
+curve(dVG(x,0, theta=0, nu=0.5, sigma=0.25,t=2),add=TRUE,col="blue",lty=2)
+curve(dVG(x,0, theta=0, nu=0.5, sigma=0.25,t=3),add=TRUE,col="red",lty=3)
+legend("topright",legend=c("t=1",
+                           "t=2",
+                           "t=3"),
+       col=c("black","blue","red"),lty=c(1,2,3),bty="n")
 dev.off()
 
 
@@ -146,11 +144,12 @@ vega=sapply(sigma.seq,function(x) vega.pathwise(c(x,param[2:3]),r,T,sim,S0,K,1)[
 
 png(file="Greeks vs. sigma.png",width=7,height=7,units="in",res=300)
 par(mfrow=c(3,2))
-plot(sigma.seq,delta)
-plot(sigma.seq,gamma)
-plot(sigma.seq,rho)
-plot(sigma.seq,theta)
-plot(sigma.seq,vega)
+
+scatter.smooth(sigma.seq,delta,span=0.2,xlab="sigma",lpars=list(col="red",lwd=2))
+scatter.smooth(sigma.seq,gamma,span=0.5,xlab="sigma",lpars=list(col="red",lwd=2))
+scatter.smooth(sigma.seq,rho,span=0.2,xlab="sigma",lpars=list(col="red",lwd=2))
+scatter.smooth(sigma.seq,theta,span=0.5,xlab="sigma",lpars=list(col="red",lwd=2))
+scatter.smooth(sigma.seq,vega,span=0.2,xlab="sigma",lpars=list(col="red",lwd=2))
 par(mfrow=c(1,1))
 dev.off()
 
@@ -164,11 +163,11 @@ vega=sapply(theta.seq,function(x) vega.pathwise(c(param[1],x,param[3]),r,T,sim,S
 
 png(file="Greeks vs. theta.png",width=7,height=7,units="in",res=300)
 par(mfrow=c(3,2))
-plot(theta.seq,delta)
-plot(theta.seq,gamma)
-plot(theta.seq,rho)
-plot(theta.seq,theta)
-plot(theta.seq,vega)
+scatter.smooth(theta.seq,delta,span=0.5,xlab="theta",lpars=list(col="red",lwd=2))
+scatter.smooth(theta.seq,gamma,span=0.5,xlab="theta",lpars=list(col="red",lwd=2))
+scatter.smooth(theta.seq,rho,span=0.5,xlab="theta",lpars=list(col="red",lwd=2))
+scatter.smooth(theta.seq,theta,span=0.5,xlab="theta",lpars=list(col="red",lwd=2))
+scatter.smooth(theta.seq,vega,span=0.5,xlab="theta",lpars=list(col="red",lwd=2))
 par(mfrow=c(1,1))
 dev.off()
 
@@ -182,11 +181,11 @@ vega=sapply(nu.seq,function(x) vega.pathwise(c(param[1:2],x),r,T,sim,S0,K,1)[[1]
 
 png(file="Greeks vs. nu.png",width=7,height=7,units="in",res=300)
 par(mfrow=c(3,2))
-plot(nu.seq,delta)
-plot(nu.seq,gamma)
-plot(nu.seq,rho)
-plot(nu.seq,theta)
-plot(nu.seq,vega)
+scatter.smooth(nu.seq,delta,span=0.6,xlab="nu",lpars=list(col="red",lwd=2))
+scatter.smooth(nu.seq,gamma,span=0.6,xlab="nu",lpars=list(col="red",lwd=2))
+scatter.smooth(nu.seq,rho,span=0.6,xlab="nu",lpars=list(col="red",lwd=2))
+scatter.smooth(nu.seq,theta,span=0.6,xlab="nu",lpars=list(col="red",lwd=2))
+scatter.smooth(nu.seq,vega,span=0.6,xlab="nu",lpars=list(col="red",lwd=2))
 par(mfrow=c(1,1))
 dev.off()
 
@@ -208,3 +207,7 @@ IS(param.old, param.new,T,type)
 VG.TimeChange.Euro(param,r,T,sim,S0,K,type)$price
 VG.DiffGamma.Euro(param,r,T,sim,S0,K,type)$price
 
+## Control Variates
+control.price(S0, K, r, T, param[1], steps, type=1, param[3], param[2], sim)
+vg.geom.asian.mc.price(S0, K, r, T, param[1], type=1, param[3], param[2], sim, steps, "discrete-geometric") 
+FFT.price.geom.asian(char.VG, S0 = S0, K = K, r = r, T = T,type = 1, 1000)
