@@ -6,6 +6,7 @@ T=1
 sim=1e5
 r=0.05
 steps=252
+tau <- T/steps
 
 
 #1 Asian/European price for VG_MC, VG_FFT, BS
@@ -22,11 +23,14 @@ GBM.Euro(r,param[1],T,sim,S0,K,-1)$price
 bs.price(S0, K, r, T, param[1], -1)
 
 vg.geom.asian.mc.price(S0, K, r, T, param[1], type = 1, param[3], param[2], sim, steps)$price
+FFT.price(char.VG, S0 = S0, K = K, r = r, T = T,type = 1, steps)
 bs.geom.asian.mc.price(S0, K, r, T, param[1], type = 1, sim, steps)$price
+FFT.price(char.BS, S0 = S0, K = K, r = r, T = T,type = 1, steps)
 
 vg.geom.asian.mc.price(S0, K, r, T, param[1], type = -1, param[3], param[2], sim, steps)$price
+FFT.price(char.VG, S0 = S0, K = K, r = r, T = T,type = -1, steps)
 bs.geom.asian.mc.price(S0, K, r, T, param[1], type = -1, sim, steps)$price
-
+FFT.price(char.BS, S0 = S0, K = K, r = r, T = T,type = -1, steps)
 
 #2 price paths for VG and GBM
 S.VG=vg.geom.asian.mc.price(S0, K, r, T, param[1], type = 1, param[3], param[2], 10, steps)$S
