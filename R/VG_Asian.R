@@ -1,6 +1,14 @@
 # Discretely monitored Fixed Strike Geometric Asian
+
+asian.discpayoff <- function(id,S, K, r, q, T, vol, N, M, type) {
+  price <- sprice(S = S, r = r, q = q, T = T, vol = vol, N = N, M = M)
+  avgprice <-  
+  exp(-r*T)*pmax( type * (avgprice - K),0)
+}
+
+
 vg.geom.asian.mc.price <- 
-  function(S0, K, r, T, sigma, type, nu, theta, nsim, steps) {
+  function(S0, K, r, T, sigma, type, nu, theta, nsim, steps, asiantype) {
 
   tau <- T/steps
   S   <- matrix(S0, nrow = nsim,ncol = 1+steps)
@@ -14,7 +22,14 @@ vg.geom.asian.mc.price <-
     S[,i+1] <- S[,i] * exp(r*tau + omega*tau + X)
   }
   
-  payoff <- exp(apply(log(S[,-1]),1,mean)) - K
+  payoff <- if(asiantype == "discrete-geometric") {
+    exp(apply(log(S),1,mean)) - K
+  } else if (asiantype == "discrete-arithmetic") {
+    apply(S,1,mean) - K
+  }else if (asiantype == "continuous-arithmetic") {
+    0.5/steps*apply(S[,1:steps] +  S[,2:(steps+1)],1,sum) - K
+  }
+  
   prices <- exp(-r*T)*pmax(type*payoff,0) 
   
   list( price = mean(prices), se = sd(prices)/sqrt(nsim))
