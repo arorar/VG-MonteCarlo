@@ -117,4 +117,4 @@ char.VG <- function(u) {
 # FFT.price.geom.asian(char.BS, S0 = S0, K = K, r = r, T = T,type = 1, steps)
 # mc.call <- bs.geom.asian.mc.price(S0, K, r, T, sigma, type = 1, nsim, steps)
 # FFT.price.geom.asian(char.VG, S0 = S0, K = K, r = r, T = T,type = 1, steps)
-# mc.vg.call <- vg.geom.asian.mc.price(S0, K, r, T, sigma, type = 1, nu, theta, nsim, steps)
+# mc.vg.call <- vg.geom.asian.mc.price(S0, K, r, T, sigma, type = 1, nu, theta, nsim, steps,"discrete-geometric")
