@@ -1,4 +1,4 @@
-
+# Initiate parameters
 param=c(0.25,-0.05,0.5) #c(sigma,theta,nu)
 S0=100
 K=110
@@ -9,7 +9,8 @@ steps=252
 tau <- T/steps
 
 
-#1 Asian/European price for VG_MC, VG_FFT, BS
+## 1. Asian/European price for VG_MC, VG_FFT, GBM, BS
+########################################################
 VG.TimeChange.Euro(param,r,T,sim,S0,K,1)$price
 VG.DiffGamma.Euro(param,r,T,sim,S0,K,1)$price
 FFT.price(char.VG, S0 = S0, K = K, r = r, T = T, type = 1)
@@ -32,7 +33,9 @@ FFT.price.geom.asian(char.VG, S0 = S0, K = K, r = r, T = T,type = -1, steps)
 bs.geom.asian.mc.price(S0, K, r, T, param[1], type = -1, sim, steps)$price
 FFT.price.geom.asian(char.BS, S0 = S0, K = K, r = r, T = T,type = -1, steps)
 
-#2 price paths for VG and GBM
+
+## 2 price paths for VG and GBM
+#################################################################################################
 S.VG=vg.geom.asian.mc.price(S0, K, r, T, param[1], type = 1, param[3], param[2], 10, steps)$S
 S.GBM=bs.geom.asian.mc.price(S0, K, r, T, param[1], type = -1, 10, steps)$S
 
@@ -45,7 +48,8 @@ matplot(t(S.GBM),type="l",xlab="Time",ylab="Stock Price",main="Stock price paths
 dev.off()
 
 
-#3 option prices change with K
+#3 European call/put option prices change with K
+###############################################################################################3
 strike=seq(K-20,K+20,by=5)
 p.VG=sapply(strike, function(x) VG.TimeChange.Euro(param,r,T,sim,S0,x,1)$price[1]) 
 p.GBM=sapply(strike, function(x) GBM.Euro(r,param[1],T,sim,S0,x,1)$price[1])
@@ -64,14 +68,13 @@ legend("topleft",legend=c("VG","GBM"),lty=c(1,2),col=c("black","red"),bty="n")
 dev.off()
 
 
-
-
 #4 Fit VG distribution
+############################################################################################3
 ## Please see VG_FitDistribution.R
 
 
 #5 VG distribution vs. different parameters
-
+#########################################################################################
 png(file="VG density vs. sigma.png",width=7,height=5,units="in",res=300)
 curve(dVG(x,0, theta=0, nu=0.5, sigma=0.25),from=-1,to=1,ylim=c(0,2.5),ylab="density",
       main="VG density vs. sigma")
@@ -105,8 +108,6 @@ legend("topright",legend=c("theta=0,nu=0.2,sigma=0.25",
        col=c("red","black","blue"),lty=c(2,1,3),bty="n",cex=0.9)
 dev.off()
 
-
-
 png(file="VG density vs. Time.png",width=7,height=5,units="in",res=300)
 curve(dVG(x,0, theta=0, nu=0.5, sigma=0.25,t=1),from=-1,to=1,ylab="density",
       main="VG density vs. Time")
@@ -120,7 +121,7 @@ dev.off()
 
 
 #6 Greeks
-
+################################################################################
 delta.diff(param,r,T,sim,S0,K,1,1)
 delta.pathwise(param,r,T,sim,S0,K,1)[[1]]
 fourier.greeks("delta", S0, K, r, T, param[2] , param[3] , param[1])
@@ -166,11 +167,7 @@ scatter.smooth(sigma.seq,vega,span=0.2,xlab="sigma",lpars=list(col="red",lwd=2))
 lines(sigma.seq,vega2,xlab="sigma",lwd=2,lty=2)
 legend("bottomright",c("VG","BS"),col=c("red","Black"),lty=c(1,2),bty="n")
 
-par(mfrow=c(1,1))
 dev.off()
-
-
-
 
 
 theta.seq=seq(-0.2,0.2,by=0.01)
@@ -209,10 +206,9 @@ par(mfrow=c(1,1))
 dev.off()
 
 
-
-
-
 #7 Variance reduction
+###########################################################################
+
 ## Importance Sampling
 param=c(0.25,-0.05,0.5) #c(sigma,theta,nu)
 S0=100

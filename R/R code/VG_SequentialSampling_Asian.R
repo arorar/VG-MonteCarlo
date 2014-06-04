@@ -1,12 +1,15 @@
 # Discretely monitored Fixed Strike Geometric Asian
 
+
 asian.discpayoff <- function(id,S, K, r, q, T, vol, N, M, type) {
   price <- sprice(S = S, r = r, q = q, T = T, vol = vol, N = N, M = M)
   avgprice <-  
   exp(-r*T)*pmax( type * (avgprice - K),0)
 }
 
-
+##################################################################
+### Price Geom Asian option via VG process #######################
+##################################################################
 vg.geom.asian.mc.price <- 
   function(S0, K, r, T, sigma, type, nu, theta, nsim, steps, asiantype) {
 
@@ -35,6 +38,10 @@ vg.geom.asian.mc.price <-
   list( price = c(price=mean(prices), se = sd(prices)/sqrt(nsim)))
 }
 
+
+######################################################################
+### Price Geom Asian option via GBM process ##########################
+######################################################################
 bs.geom.asian.mc.price <- 
   function(S0, K, r, T, sigma, type, nsim, steps) {
     
@@ -53,6 +60,10 @@ bs.geom.asian.mc.price <-
     list( price = c(price=mean(prices), se = sd(prices)/sqrt(nsim)),S=S)
 }
 
+
+##########################################################################
+### Price Geom Asian option via Fast Fourier Transform ###################
+##########################################################################
 FFT.price.geom.asian <- function(phi, S0, K, r, T, type, steps) {
   
   i <- sqrt(as.complex(-1))
@@ -98,11 +109,12 @@ char.VG <- function(u) {
   (1 - i*u*nu*theta + 0.5*(sigma*u)^2*nu)^(-tau/nu)
 }
 
+##################################################################################
 
-S0 <- 100; K <- 110; r <- 0.05; T <- 1; sigma <- 0.25
-theta <- -0.05; nu <- 0.5; nsim <- 10^5; steps <- 10^3; tau <- T/steps
-
-FFT.price.geom.asian(char.BS, S0 = S0, K = K, r = r, T = T,type = 1, steps)
-mc.call <- bs.geom.asian.mc.price(S0, K, r, T, sigma, type = 1, nsim, steps)
-FFT.price.geom.asian(char.VG, S0 = S0, K = K, r = r, T = T,type = 1, steps)
-mc.vg.call <- vg.geom.asian.mc.price(S0, K, r, T, sigma, type = 1, nu, theta, nsim, steps)
+# S0 <- 100; K <- 110; r <- 0.05; T <- 1; sigma <- 0.25
+# theta <- -0.05; nu <- 0.5; nsim <- 10^5; steps <- 10^3; tau <- T/steps
+# 
+# FFT.price.geom.asian(char.BS, S0 = S0, K = K, r = r, T = T,type = 1, steps)
+# mc.call <- bs.geom.asian.mc.price(S0, K, r, T, sigma, type = 1, nsim, steps)
+# FFT.price.geom.asian(char.VG, S0 = S0, K = K, r = r, T = T,type = 1, steps)
+# mc.vg.call <- vg.geom.asian.mc.price(S0, K, r, T, sigma, type = 1, nu, theta, nsim, steps)

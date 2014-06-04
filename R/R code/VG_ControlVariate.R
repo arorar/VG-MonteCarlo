@@ -1,3 +1,8 @@
+
+####################################################################
+## Price Geom Asian option via VG Control Variate ##################
+####################################################################
+
 # Price of a Geometric Asian Call using Analytical Pricing
 geom.asian.call <- function(S,K,r,T,vol,N){
   dT  <- T/N
@@ -76,14 +81,16 @@ control.price <- function(S, K, r, T, vol, N, type, nu, theta, nsim) {
   list(price = cv.price, se = cv.se)  
 }
 
-S0 <- 100; K <- 110; r <- 0.05; T <- 0.25; sigma <- 0.25
-theta <- -0.15; nu <- 0.5; nsim <- 10^5; steps <- 10^3
+############################################################################################
 
-set.seed(882258275)
-control.price(S0, K, r, T, sigma, steps, type=1, nu, theta, nsim)
-
-set.seed(403) 
-vg.geom.asian.mc.price(S0, K, r, T, sigma, type=1, nu, theta, nsim, steps, "discrete-geometric") 
-
-FFT.price.geom.asian(char.VG, S0 = S0, K = K, r = r, T = T,type = 1, steps)
+# S0 <- 100; K <- 110; r <- 0.05; T <- 0.25; sigma <- 0.25
+# theta <- -0.15; nu <- 0.5; nsim <- 10^5; steps <- 10^3
+# 
+# set.seed(882258275)
+# control.price(S0, K, r, T, sigma, steps, type=1, nu, theta, nsim)
+# 
+# set.seed(403) 
+# vg.geom.asian.mc.price(S0, K, r, T, sigma, type=1, nu, theta, nsim, steps, "discrete-geometric") 
+# 
+# FFT.price.geom.asian(char.VG, S0 = S0, K = K, r = r, T = T,type = 1, steps)
 

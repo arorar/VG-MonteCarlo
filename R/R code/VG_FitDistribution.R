@@ -1,6 +1,10 @@
 library(moments)
 library(quantmod)
 
+#################################################################
+## Distribution functions for dVG, pVG, and qVG #################
+#################################################################
+
 dVG <- function(x , c, theta , nu , sigma, t=1) {
   
   temp.func <- function(y) {
@@ -45,6 +49,11 @@ qVG <- function(p , c, theta , nu , sigma, t=1) {
   fit.p$par
 }
 
+
+###################################################################
+## Fit VG distribution function ###################################
+###################################################################
+
 fit.VG <- function(x, trace=FALSE) {
   
   names(x) <- NULL
@@ -72,6 +81,8 @@ fit.VG <- function(x, trace=FALSE) {
   
   list(mean = fit.vg$par[1], theta=fit.vg$par[2], nu=fit.vg$par[3], sigma=fit.vg$par[4])
 }
+
+#############################################################################################
 
 # #download underlying asset prices and calculate its log returns
 dat=getSymbols(Symbols="SPY",src="yahoo")

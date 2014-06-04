@@ -1,4 +1,6 @@
-
+#####################################################################
+## Calculate Greeks via Fourier method ##############################
+#####################################################################
 make.greeks <- function(type, S0, K, r, T, theta , nu , sigma) {
   
   alpha <- 1.65
@@ -47,9 +49,9 @@ fourier.greeks <- function(name, S0, K, r, T, theta , nu , sigma) {
 }
 
 
-##############################
-# Finite central difference ##
-##############################
+##############################################################
+# Calculate Greeks via Finite central difference #############
+##############################################################
 
 delta.diff=function(param,r,T,sim,S0,K,type,h){
   payoff1=VG.TimeChange.Euro(param,r,T,sim,S0+h,K,type)$payoff
@@ -107,9 +109,9 @@ vega.diff=function(param,r,T,sim,S0,K,type,h){
 }
 
 
-################################
-# Pathwise #####################
-################################
+################################################################
+# Calculate Greeks via Pathwise derivative #####################
+################################################################
 
 delta.pathwise=function(param,r,T,sim,S0,K,type){
   S=VG.TimeChange.Euro(param,r,T,sim,S0,K,type)$S
@@ -123,7 +125,7 @@ delta.pathwise=function(param,r,T,sim,S0,K,type){
   deriv.se=sd(v)/sqrt(sim)
   return(list(c(deriv.mean,deriv.se),v))
 }
-#########################################################
+
 
 gamma.pathwise=function(param,r,T,sim,S0,K,type,h){
   delta1=delta.pathwise(param,r,T,sim,S0+h,K,type)[[2]]
@@ -134,7 +136,7 @@ gamma.pathwise=function(param,r,T,sim,S0,K,type,h){
   deriv.se=sd(v)/sqrt(sim)
   return(c(deriv.mean,deriv.se))
 }
-########################################################
+
 
 rho.pathwise=function(param,r,T,sim,S0,K,type){
   S=VG.TimeChange.Euro(param,r,T,sim,S0,K,type)$S
@@ -148,7 +150,7 @@ rho.pathwise=function(param,r,T,sim,S0,K,type){
   deriv.se=sd(v)/sqrt(sim)
   return(c(deriv.mean,deriv.se))
 }
-#########################################################
+
 
 theta.pathwise=function(param,r,T,sim,S0,K,type){
   sigma=param[1]
@@ -168,7 +170,7 @@ theta.pathwise=function(param,r,T,sim,S0,K,type){
   deriv.se=sd(v)/sqrt(sim)
   return(c(deriv.mean,deriv.se))
 }
-###########################################################
+
 
 vega.pathwise=function(param,r,T,sim,S0,K,type){
   sigma=param[1]
@@ -189,28 +191,29 @@ vega.pathwise=function(param,r,T,sim,S0,K,type){
   deriv.se=sd(v)/sqrt(sim)
   return(c(deriv.mean,deriv.se))
 }
-#################################################################
+
+#############################################################################
 
 
 
-#Test the result
-param=c(0.25,-0.15,0.5)
-S0=30; K=30; T=1; sim=1e5; r=0.05
-
-delta.diff(param,r,T,sim,S0,K,1,1)
-delta.pathwise(param,r,T,sim,S0,K,1)[[1]]
-fourier.greeks("delta", S0, K, r, T, param[2] , param[3] , param[1])
-
-gamma.diff(param,r,T,sim,S0,K,1,1)
-gamma.pathwise(param,r,T,sim,S0,K,1,1)
-fourier.greeks("gamma", S0, K, r, T, param[2] , param[3] , param[1])
-
-rho.diff(param,r,T,sim,S0,K,1,0.1)
-rho.pathwise(param,r,T,sim,S0,K,1)
-fourier.greeks("rho", S0, K, r, T, param[2] , param[3] , param[1])
-
-theta.diff(param,r,T,sim,S0,K,1,0.1)
-theta.pathwise(param,r,T,sim,S0,K,1)
-
-vega.diff(param,r,T,sim,S0,K,1,0.1)
-vega.pathwise(param,r,T,sim,S0,K,1)
+# #Test the result
+# param=c(0.25,-0.15,0.5)
+# S0=30; K=30; T=1; sim=1e5; r=0.05
+# 
+# delta.diff(param,r,T,sim,S0,K,1,1)
+# delta.pathwise(param,r,T,sim,S0,K,1)[[1]]
+# fourier.greeks("delta", S0, K, r, T, param[2] , param[3] , param[1])
+# 
+# gamma.diff(param,r,T,sim,S0,K,1,1)
+# gamma.pathwise(param,r,T,sim,S0,K,1,1)
+# fourier.greeks("gamma", S0, K, r, T, param[2] , param[3] , param[1])
+# 
+# rho.diff(param,r,T,sim,S0,K,1,0.1)
+# rho.pathwise(param,r,T,sim,S0,K,1)
+# fourier.greeks("rho", S0, K, r, T, param[2] , param[3] , param[1])
+# 
+# theta.diff(param,r,T,sim,S0,K,1,0.1)
+# theta.pathwise(param,r,T,sim,S0,K,1)
+# 
+# vega.diff(param,r,T,sim,S0,K,1,0.1)
+# vega.pathwise(param,r,T,sim,S0,K,1)
