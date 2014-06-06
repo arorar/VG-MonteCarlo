@@ -115,7 +115,7 @@ dev.off()
 
 #compare the CDFs
 png(file="CDF plots and QQ plot.png",width=9,height=5,units="in",res=300)
-par(mfrow=c(1,2))
+par(mfrow=c(1,1))
 plot(ecdf(as.numeric(SPreturn)),verticals=TRUE,do.points=FALSE,lwd=2,
      main="Empirical CDF vs. Three distribution CDFs
      (sigma=0.0074,theta=-0.001,nu=0.36)")
